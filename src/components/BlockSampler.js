@@ -7,7 +7,7 @@ export class BlockSampler extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      in_game: false,
+      in_game: true,
       blocks: [
         [Math.floor(Math.random() * 5), 0],
         [Math.floor(Math.random() * 5), 1],
@@ -16,10 +16,10 @@ export class BlockSampler extends React.Component {
         [Math.floor(Math.random() * 5), 4],
         [Math.floor(Math.random() * 5), 5]
       ],
-      player: [0, 9],
+      player: [2, 9],
       score: 0,
       level: 1,
-      new_high_score: true
+      new_high_score: false
     };
   }
 
@@ -41,6 +41,7 @@ export class BlockSampler extends React.Component {
         } else {
           break;
         }
+      // Next state no movement.
       case 40:
         if (this.state.in_game) {
           this.movePlayer(0);
@@ -50,6 +51,7 @@ export class BlockSampler extends React.Component {
             in_game: true
           });
           this.newGame();
+          break;
         }
 
       default:
@@ -71,8 +73,8 @@ export class BlockSampler extends React.Component {
     if (this.state.in_game) {
       return (
         <div className="sampler">
-          {this.state.blocks.map(block => (
-            <Block xPos={block[0]} yPos={block[1]} />
+          {this.state.blocks.map((block, i) => (
+            <Block key={i} xPos={block[0]} yPos={block[1]} />
           ))}
           <Player xPos={this.state.player[0]} yPos={this.state.player[1]} />
           <div className="sampler-info">
@@ -141,97 +143,11 @@ export class BlockSampler extends React.Component {
     }
   }
 
-  addEnemy() {
-    if (this.state.level === 1) {
-      this.oneRand();
-    } else if (this.state.level === 2) {
-      if (this.state.score % 2 == 0) {
-        this.oneRand();
-      } else {
-        this.twoRand();
-      }
-    } else if (this.state.level === 3) {
-      if (this.state.score % 2 == 0) {
-        this.oneRand();
-      } else if (this.state.score % 3 == 0) {
-        this.twoRand();
-      } else {
-        this.threeRand();
-      }
-    } else if (this.state.level === 4) {
-      if (this.state.score % 2 == 0) {
-        this.oneRand();
-      } else {
-        this.threeRand();
-      }
-    } else if (this.state.level === 5) {
-      if (this.state.score % 2 == 0) {
-        this.oneRand();
-      } else {
-        this.twoAdj();
-      }
-    } else if (this.state.level === 6) {
-      if (this.state.score % 2 == 0 || this.state.score % 3 == 0) {
-        this.oneRand();
-      } else {
-        this.threeAdj();
-      }
-    } else if (this.state.level === 7) {
-      if (this.state.score % 2 == 0) {
-        this.twoRand();
-      } else if (this.state.score % 3 == 0) {
-        this.oneRand();
-      } else if (this.state.score % 5 == 0) {
-        this.twoAdj();
-      } else if (this.state.score % 7 == 0) {
-        this.threeAdj();
-      } else {
-        this.oneRand();
-      }
-    } else if (this.state.level === 8) {
-      if (this.state.score % 4 == 0) {
-        this.fourRand();
-      } else if (this.state.score % 4 == 1) {
-        this.noneRand();
-      } else {
-        this.oneRand();
-      }
-    } else if (this.state.level === 9) {
-      if (this.state.score % 3 == 0) {
-        this.threeAdj();
-      } else if (this.state.score % 3 == 1) {
-        this.noneRand();
-      } else if (this.state.score % 5 == 0) {
-        this.fourRand();
-      } else if (this.state.score % 5 == 1) {
-        this.noneRand();
-      } else {
-        this.oneRand();
-      }
-    } else if (this.state.level >= 10) {
-      if (this.state.score % 3 == 0) {
-        this.twoRand();
-      } else if (this.state.score % 5 == 0) {
-        this.threeAdj();
-      } else if (this.state.score % 5 == 1) {
-        this.oneRand();
-      } else if (this.state.score % 7 == 0) {
-        this.fourRand();
-      } else if (this.state.score % 7 == 1) {
-        this.noneRand();
-      } else {
-        this.oneRand();
-      }
-    }
-  }
-
   checkLevelUp() {
     this.setState({
       level: Math.floor(this.state.score / 50) + 1
     });
   }
-
-  // High Score System
 
   gameOver(score) {
     this.setHighScore(score);
@@ -241,20 +157,6 @@ export class BlockSampler extends React.Component {
       player: [],
       level: 1
     });
-  }
-
-  getHighScore() {
-    var high_score = localStorage.getItem("hc");
-    return high_score;
-  }
-
-  setHighScore(score) {
-    if (score > this.getHighScore()) {
-      localStorage.setItem("hc", JSON.stringify(score));
-      this.setState({
-        new_high_score: true
-      });
-    }
   }
 
   newGame() {
@@ -273,7 +175,110 @@ export class BlockSampler extends React.Component {
     });
   }
 
-  // Spawning tactics
+  // Spawn blocks in accordance with level.
+  addEnemy() {
+    if (this.state.level === 1) {
+      this.oneRand();
+    } else if (this.state.level === 2) {
+      if (this.state.score % 2 === 0) {
+        this.oneRand();
+      } else {
+        this.twoRand();
+      }
+    } else if (this.state.level === 3) {
+      if (this.state.score % 2 === 0) {
+        this.oneRand();
+      } else if (this.state.score % 3 === 0) {
+        this.twoRand();
+      } else {
+        this.threeRand();
+      }
+    } else if (this.state.level === 4) {
+      if (this.state.score % 2 === 0) {
+        this.oneRand();
+      } else {
+        this.threeRand();
+      }
+    } else if (this.state.level === 5) {
+      if (this.state.score % 2 === 0) {
+        this.oneRand();
+      } else {
+        this.twoAdj();
+      }
+    } else if (this.state.level === 6) {
+      if (this.state.score % 2 === 0 || this.state.score % 3 === 0) {
+        this.oneRand();
+      } else {
+        this.threeAdj();
+      }
+    } else if (this.state.level === 7) {
+      if (this.state.score % 2 === 0) {
+        this.twoRand();
+      } else if (this.state.score % 3 === 0) {
+        this.oneRand();
+      } else if (this.state.score % 5 === 0) {
+        this.twoAdj();
+      } else if (this.state.score % 7 === 0) {
+        this.threeAdj();
+      } else {
+        this.oneRand();
+      }
+    } else if (this.state.level === 8) {
+      if (this.state.score % 4 === 0) {
+        this.fourRand();
+      } else if (this.state.score % 4 === 1) {
+        this.noneRand();
+      } else {
+        this.oneRand();
+      }
+    } else if (this.state.level === 9) {
+      if (this.state.score % 3 === 0) {
+        this.threeAdj();
+      } else if (this.state.score % 3 === 1) {
+        this.noneRand();
+      } else if (this.state.score % 5 === 0) {
+        this.fourRand();
+      } else if (this.state.score % 5 === 1) {
+        this.noneRand();
+      } else {
+        this.oneRand();
+      }
+    } else if (this.state.level >= 10) {
+      if (this.state.score % 3 === 0) {
+        this.twoRand();
+      } else if (this.state.score % 5 === 0) {
+        this.threeAdj();
+      } else if (this.state.score % 5 === 4) {
+        this.oneRand();
+      } else if (this.state.score % 5 === 1) {
+        this.noneRand();
+      } else if (this.state.score % 7 === 0) {
+        this.fourRand();
+      } else if (this.state.score % 7 === 1) {
+        this.noneRand();
+      } else {
+        this.oneRand();
+      }
+    }
+  }
+
+  // High Score System
+
+  getHighScore() {
+    var high_score = localStorage.getItem("hc");
+    return high_score;
+  }
+
+  setHighScore(score) {
+    if (score > this.getHighScore()) {
+      localStorage.setItem("hc", JSON.stringify(score));
+      this.setState({
+        new_high_score: true
+      });
+    }
+  }
+
+  // Spawn tactics
 
   noneRand() {
     this.setState({

@@ -4,7 +4,7 @@ body {
   width: 195px;
   background-color: #111111;
   color: white;
-  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-family: Futura;
   font-size: 15px;
 }
 
@@ -66,14 +66,14 @@ h1 {
   position: absolute;
   text-align: center;
   left: 60px;
-  top: 230px;
+  top: 270px;
 }
 
 .currscore {
   position: absolute;
   text-align: center;
   left: 60px;
-  top: 150px;
+  top: 185px;
 }
 
 .scoreset {
